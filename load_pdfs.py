@@ -1,0 +1,42 @@
+from serpapi import GoogleSearch
+import os
+import requests
+
+
+
+def download_patent(keyword) : 
+  # c6c4dee12e2683e02eb29f9831754553e4db8ebb0d1261f2d9810146d9da92fa
+  params = {
+    "engine": "google_patents",
+    "q": keyword,
+    "api_key": "c6c4dee12e2683e02eb29f9831754553e4db8ebb0d1261f2d9810146d9da92fa",
+    "country" : "US",
+    "num": 10
+    ## specify latest patents !!
+  }
+
+  search = GoogleSearch(params)
+  results = search.get_dict()
+  print(results)
+  organic_results = results["organic_results"]
+
+  pdf_links = list()
+
+  for dict in organic_results : 
+      try : 
+        print(dict['pdf'])
+        pdf_links.append(dict['pdf'])
+      except :
+        print('not found')
+
+  for i in range(len(pdf_links)) : 
+    response = requests.get(pdf_links[i])
+    if response.status_code == 200:
+        with open(f"downloaded_{i}.pdf", "wb") as file:
+            file.write(response.content)
+        print("Download complete!")
+        return True
+    else:
+        print("Failed to download PDF:", response.status_code)
+        return False
+ 
