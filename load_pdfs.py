@@ -5,7 +5,6 @@ import requests
 
 
 def download_patent(keyword) : 
-  # c6c4dee12e2683e02eb29f9831754553e4db8ebb0d1261f2d9810146d9da92fa
   params = {
     "engine": "google_patents",
     "q": keyword,
