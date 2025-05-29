@@ -1,0 +1,16 @@
+
+*.chat_history.db
+
+
+__pycache__/
+
+
+venv/
+
+
+patents_dataset/
+chroma_db/
+
+
+US9702423B2_vibration.pdf
+clean_patent.pdf
