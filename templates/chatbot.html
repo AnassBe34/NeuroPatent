@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Chat</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/FAVICON.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot_style.css') }}">
+  </head>
+  <body >
+    <div class="sessions_container">
+        <a href="/" style="display: flex; justify-content: center;"><img  id="logo"  src="{{ url_for('static', filename='images/NEUROPATENT2.png') }}" alt="Loading..." style="height:75px; width: 290px; margin-top: 10px; text-align: center;"></a>
+        <div class="sessions">
+          {% for session_name in sessions %}
+    <div class="one_session" data-session-url="{{ url_for('go_session', session_id=session_name) }}">
+        <p class="session_id">{{ session_name }}</p>
+        <form class="delete_form"  action="{{ url_for('delete_session') }}" method="post">
+            <input name="session_id_delete" type="hidden" value="{{ session_name }}">
+            <button class="delete_button" type="submit">×</button>
+        </form>
+    </div>
+    {% endfor %}
+        </div>
+    </div>
+      <div class="chat_container">
+        <h1 class="header">{{patent_id}} </h1>
+        <div class="chatbox" id="chatbox">
+          {%if messages%}
+            {%for message in messages%}
+              <div class="message user"><strong></strong>{{ message[0] | safe }}</div>
+              <div class="message bot"><strong></strong>{{ message[1] | safe }}</div>
+            {%endfor%}
+          {%endif%}
+        </div>
+        <form autocomplete="off" id="chat_form">
+            <input class="myinput" type="text" id="message" placeholder="Type your message here...">
+            <input name = "session_idd" type="hidden" id="session-id-input" value="{{ session_id }}">
+        </form>
+        <button id="send" class="btn btn-dark">Send</button>
+      </div>
+    <script>
+      // Get DOM elements
+      const chatbox = document.getElementById("chatbox");
+      const messageInput = document.getElementById("message");
+      const sendButton = document.getElementById("send");
+      const chatForm = document.getElementById("chat_form");
+      chatbox.scrollTop = chatbox.scrollHeight;
+
+      // Handle Enter key press
+      messageInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+              e.preventDefault();
+              sendMessage();
+          }
+      });
+
+      // Handle Send button click
+      sendButton.addEventListener('click', sendMessage);
+      
+      function sendMessage() {
+    const userMessage = messageInput.value.trim();
+    if (!userMessage) return;
+
+    // Get the session_id from the hidden input field
+    const sessionId = document.getElementById('session-id-input').value;
+
+    // Add user message to chat
+    addMessageToChat("", userMessage, "user");
+    messageInput.value = "";
+
+    const botMessageDiv = addMessageToChat("", "<img class='spinner' src='/static/images/loading.gif' alt='Loading...'>", "bot");
+
+    // Send to Flask backend with session_id
+    fetch("/get_response", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `user_input=${encodeURIComponent(userMessage)}&session_idd=${encodeURIComponent(sessionId)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Add bot response to chat
+        botMessageDiv.innerHTML = `<strong></strong> ${data.response}`;
+        chatbox.scrollTop = chatbox.scrollHeight;
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        addMessageToChat("System", "Error getting response", "system");
+    });
+}
+
+      function addMessageToChat(sender, message, messageType) {
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message ${messageType}`;
+
+    messageDiv.innerHTML = sender 
+        ? `<strong>${sender}:</strong> ${message}`
+        : message;
+
+    chatbox.appendChild(messageDiv);
+    chatbox.scrollTop = chatbox.scrollHeight;
+
+    return messageDiv; // Return the message div so we can update it later
+}
+
+
+    </script>
+    <script>
+      document.querySelectorAll('.one_session').forEach(el => {
+          el.addEventListener('click', () => {
+              window.location.href = el.dataset.sessionUrl;
+          });
+      });
+      </script>
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
