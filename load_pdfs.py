@@ -29,7 +29,7 @@ def download_patent(keyword) :
   params = {
     "engine": "google_patents",
     "q": keyword,
-    "api_key": "c6c4dee12e2683e02eb29f9831754553e4db8ebb0d1261f2d9810146d9da92fa",
+    "api_key": "YOUR SERPAPI API HERE",
     "country" : "US",
     "num": 10,
     ## specify latest patents !!
