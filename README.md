@@ -55,10 +55,6 @@ Start the application :
 python app.py
 ```
 
-## Usage
-- Use the web UI in `templates/` for chat-style queries and keyword search.
-- For programmatic access, use `read_from_db.py` functions to retrieve similar document chunks and `rag.py` to generate answers.
-
 ## Development notes
 - The embedding implementation is in `embedding_function.py` — swap the model here if needed (if you want to use a specific embedding function).
 - The project currently uses a local Chroma-based store under `chroma_db/` — treat this folder as the persistent vector store.
