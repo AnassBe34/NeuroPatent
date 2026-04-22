@@ -46,8 +46,9 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 3) Get your SerpAPI API (free) and place it in the load_pdfs.py file
-
-4) Run the web app
+4) Download and setup Ollama and place your model in the rag.py file
+5) Setup Tesseract OCR
+6) Run the web app
 
 Start the application :
 
