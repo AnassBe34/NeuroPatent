@@ -17,13 +17,16 @@ from sqlalchemy import create_engine
 import markdown
 import chromadb
 import re
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
 
 
 app = Flask(__name__)
 
-app.secret_key = "Hii"
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 keywords = []
 engine = create_engine("sqlite:///chat_history.db")
