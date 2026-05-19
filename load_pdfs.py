@@ -4,7 +4,10 @@ import requests
 import fitz
 from langchain_community.llms.ollama import Ollama
 from langchain.prompts import PromptTemplate
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
+SERPAPI_API = os.getenv("SERPAPI_API_KEY")
 
 model = Ollama(model="llama3.1:8b")
 
@@ -29,7 +32,7 @@ def download_patent(keyword) :
   params = {
     "engine": "google_patents",
     "q": keyword,
-    "api_key": "YOUR SERPAPI API KEY",
+    "api_key": SERPAPI_API,
     "country" : "US",
     "num": 10,
     ## specify latest patents !!
